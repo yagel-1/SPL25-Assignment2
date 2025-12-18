@@ -109,7 +109,7 @@ public class SharedVectorTest {
 
     @Test
     public void testVecMatMul() {
-        sm1.loadColumnMajor(sm1);
+        sm1.loadColumnMajor(sm1.readRowMajor());
         sv1.vecMatMul(sm1);
         double[] expected = {22, 28};
         for (int i = 0; i < expected.length; i++) {
