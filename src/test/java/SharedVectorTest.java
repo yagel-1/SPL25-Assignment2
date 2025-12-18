@@ -25,17 +25,6 @@ public class SharedVectorTest {
 
     SharedMatrix sm1;
 
-    public SharedVectorTest() {
-        testGet();
-        testLength();
-        testGetOrientation();
-        testTranspose();
-        testAdd();
-        testNegate();
-        testDot();
-        testVecMatMul();
-    }
-
     @BeforeEach
     public void setUp() throws Exception {
         sv1 = new SharedVector(vector1, VectorOrientation.ROW_MAJOR);
@@ -51,7 +40,7 @@ public class SharedVectorTest {
         double result = sv1.get(0);
         assertEquals(1, result, 0.0001);
 
-        assertThrows(IllegalArgumentException.class, ()->{sv1.get(-1);});
+        assertThrows(ArrayIndexOutOfBoundsException.class, ()->{sv1.get(-1);});
 
     }
 
@@ -72,19 +61,19 @@ public class SharedVectorTest {
         sv1.transpose();
         assertTrue(sv1.getOrientation() == VectorOrientation.COLUMN_MAJOR);
         sv2.transpose();
-        assertTrue(sv1.getOrientation() == VectorOrientation.ROW_MAJOR);
+        assertTrue(sv2.getOrientation() == VectorOrientation.ROW_MAJOR);
 
     }
 
     @Test
     public void testAdd() {
-        sv1.add(sv2);
-        double[] expected = {5, 7, 9};
+        sv1.add(sv3);
+        double[] expected = {8, 10, 12};
         for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], sv1.get(i));
         }
 
-        assertThrows(IllegalArgumentException.class, ()->{sv1.add(sv4);});
+        assertThrows(IllegalArgumentException.class, ()->{sv1.add(sv2);});
     }
 
 
@@ -118,9 +107,4 @@ public class SharedVectorTest {
 
         assertThrows(IllegalArgumentException.class, ()->{sv2.vecMatMul(sm1);});
     }
-
-    
-
-
-
 }

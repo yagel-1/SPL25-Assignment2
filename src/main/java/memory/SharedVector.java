@@ -77,8 +77,12 @@ public class SharedVector {
 
     public double dot(SharedVector other) {
         // TODO: compute dot product (row · column)
-        if (this.getOrientation() == other.getOrientation()){
-            throw new IllegalArgumentException("");
+        if (this.getOrientation() != VectorOrientation.ROW_MAJOR) {
+            throw new IllegalArgumentException("vector must be orianted in row");
+        }
+        if (other.getOrientation() != VectorOrientation.COLUMN_MAJOR) {
+            throw new IllegalArgumentException("other must be orianted in column");
+
         }
         if (this.length() != other.length()){
             throw new IllegalArgumentException("vectors must be in the same size");
@@ -103,8 +107,8 @@ public class SharedVector {
 
         }
         double[] result = new double[matrix.length()];
-        for(int i= 0 ; i < this.length() ; i++){
-            result [i] = this.dot(matrix.get(i));
+        for(int i=0 ; i < matrix.length() ; i++){
+            result[i] = this.dot(matrix.get(i));
         }
         this.vector = result;
     }
