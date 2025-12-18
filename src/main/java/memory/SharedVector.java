@@ -92,5 +92,22 @@ public class SharedVector {
 
     public void vecMatMul(SharedMatrix matrix) {
         // TODO: compute row-vector × matrix
+        if (this.length() != matrix.get(0).length()) {
+            throw new IllegalArgumentException("Incompatible dimensions for vector-matrix multiplication.");
+        }
+        if (this.getOrientation() != VectorOrientation.ROW_MAJOR) {
+            throw new IllegalArgumentException("vector must be orianted in row");
+        }
+        if (matrix.getOrientation() != VectorOrientation.COLUMN_MAJOR) {
+            throw new IllegalArgumentException("matrix must be orianted in columns");
+
+        }
+        double[] result = new double[matrix.length()];
+        for(int i= 0 ; i < this.length() ; i++){
+            result [i] = this.dot(matrix.get(i));
+        }
+        this.vector = result;
     }
+    
 }
+
