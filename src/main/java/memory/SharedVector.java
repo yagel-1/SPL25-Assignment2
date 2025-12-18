@@ -108,6 +108,10 @@ public class SharedVector {
         }
         this.vector = result;
     }
-    
+
+    //helper function
+    public double[] getVector(){
+        return vector;
+    }
 }
 

@@ -6,23 +6,73 @@ public class SharedMatrix {
 
     public SharedMatrix() {
         // TODO: initialize empty matrix
+        this.vectors = new SharedVector[0];
     }
 
     public SharedMatrix(double[][] matrix) {
         // TODO: construct matrix as row-major SharedVectors
+        if (matrix == null || matrix.length == 0) {
+            this.vectors = new SharedVector[0];
+        }
+        else{
+            this.vectors = new SharedVector[matrix.length];
+            for (int i = 0; i < matrix.length ; i++){
+                this.vectors[i] = new SharedVector(matrix[i], VectorOrientation.ROW_MAJOR); 
+            }
+        }
+        
     }
 
     public void loadRowMajor(double[][] matrix) {
         // TODO: replace internal data with new row-major matrix
+        if (matrix == null || matrix.length == 0) {
+            this.vectors = new SharedVector[0];
+        }
+        else{
+            this.vectors = new SharedVector[matrix.length];
+            for (int i = 0; i < matrix.length ; i++){
+                this.vectors[i] = new SharedVector(matrix[i], VectorOrientation.ROW_MAJOR); 
+            }
+        }
     }
 
     public void loadColumnMajor(double[][] matrix) {
         // TODO: replace internal data with new column-major matrix
+        if (matrix == null || matrix.length == 0) {
+            this.vectors = new SharedVector[0];
+        }
+        else {
+            for (int i=0; i < matrix.length ; i++){
+                double[] colVec = new double[matrix.length];
+                for (int j = 0; j < matrix[0].length; j++){
+                    colVec[i] = matrix[j][i];
+                }
+                this.vectors[i] = new SharedVector(colVec, VectorOrientation.COLUMN_MAJOR);
+            }
+        }
     }
 
     public double[][] readRowMajor() {
         // TODO: return matrix contents as a row-major double[][]
-        return null;
+        if (vectors == null || vectors.length == 0) {
+        return new double[0][0];
+        }
+        double[][] ret;
+        if (this.getOrientation() == VectorOrientation.ROW_MAJOR) { 
+            ret = new double[this.length()][this.get(0).length()];
+            for (int i = 0; i < this.length(); i++){
+                ret[i] = vectors[i].getVector(); 
+            }
+        }
+        else{
+            ret = new double[this.get(0).length()][vectors.length];
+            for (int i = 0; i < this.get(0).length(); i++){
+                for (int j = 0; j < vectors.length ; j++){
+                    ret[i][j] = this.get(j).get(i);
+                }
+            }
+        }
+        return ret;
     }
 
     public SharedVector get(int index) {
