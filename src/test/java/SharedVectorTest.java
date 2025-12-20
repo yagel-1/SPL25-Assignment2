@@ -11,19 +11,26 @@ public class SharedVectorTest {
     double[] vector2 = {4, 5, 6};
     double[] vector3 = {7, 8, 9};
     double[] vector4 = {0, 0, 0, 0, 0};
+    double[] vector5 = {-2, 0};
 
     double[][] matrix1 = {
         {1, 2},
         {3, 4},
         {5, 6}
     };
+    double[][] matrix2 = {
+        {7, 8, -9},
+        {10, 11, 12}
+    };
 
     SharedVector sv1;
     SharedVector sv2;
     SharedVector sv3;
     SharedVector sv4;
+    SharedVector sv5;
 
     SharedMatrix sm1;
+    SharedMatrix sm2;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -31,8 +38,10 @@ public class SharedVectorTest {
         sv2 = new SharedVector(vector2, VectorOrientation.COLUMN_MAJOR);
         sv3 = new SharedVector(vector3, VectorOrientation.ROW_MAJOR);
         sv4 = new SharedVector(vector4, VectorOrientation.COLUMN_MAJOR);
+        sv5 = new SharedVector(vector5, VectorOrientation.ROW_MAJOR);
 
         sm1 = new SharedMatrix(matrix1);
+        sm2 = new SharedMatrix(matrix2);
     }
 
     @Test
@@ -103,6 +112,12 @@ public class SharedVectorTest {
         double[] expected = {22, 28};
         for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], sv1.get(i));
+        }
+        sm2.loadColumnMajor(sm2.readRowMajor());
+        sv5.vecMatMul(sm2);
+        double[] expected2 = { -14, -16, 18};
+        for (int i = 0; i < expected2.length; i++) {
+            assertEquals(expected2[i], sv5.get(i));
         }
 
         assertThrows(IllegalArgumentException.class, ()->{sv2.vecMatMul(sm1);});
