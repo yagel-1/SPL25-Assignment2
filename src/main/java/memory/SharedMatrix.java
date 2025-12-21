@@ -57,51 +57,48 @@ public class SharedMatrix {
 
     public double[][] readRowMajor() {
         // TODO: return matrix contents as a row-major double[][]
-        acquireAllVectorReadLocks(vectors);
-        if (vectors == null || vectors.length == 0) {
-            return new double[0][0];
-        }
-        double[][] ret;
-        if (this.getOrientation() == VectorOrientation.ROW_MAJOR) { 
-            ret = new double[this.length()][this.get(0).length()];
-            for (int i = 0; i < this.length(); i++){
-                ret[i] = vectors[i].getVector(); 
+        try{
+            acquireAllVectorReadLocks(vectors);
+            if (vectors == null || vectors.length == 0) {
+                return new double[0][0];
             }
-        }
-        else{
-            ret = new double[this.get(0).length()][vectors.length];
-            for (int i = 0; i < this.get(0).length(); i++){
-                for (int j = 0; j < vectors.length ; j++){
-                    ret[i][j] = this.get(j).get(i);
+            double[][] ret;
+            if (this.getOrientation() == VectorOrientation.ROW_MAJOR) { 
+                ret = new double[this.length()][this.get(0).length()];
+                for (int i = 0; i < this.length(); i++){
+                    ret[i] = vectors[i].getVector(); 
                 }
             }
+            else{
+                ret = new double[this.get(0).length()][vectors.length];
+                for (int i = 0; i < this.get(0).length(); i++){
+                    for (int j = 0; j < vectors.length ; j++){
+                        ret[i][j] = this.get(j).get(i);
+                    }
+                }
+            }
+            return ret;
+        } finally{
+            releaseAllVectorReadLocks(vectors);
         }
-        releaseAllVectorReadLocks(vectors);
-        return ret;
     }
 
     public SharedVector get(int index) {
         // TODO: return vector at index
-        vectors[index].readLock();
-        SharedVector ret = vectors[index];
-        vectors[index].readUnlock();
-        return ret;
+        return vectors[index];
     }
 
     public int length() {
         // TODO: return number of stored vectors
-        acquireAllVectorReadLocks(vectors);
-        int ret = vectors.length;
-        releaseAllVectorReadLocks(vectors);
-        return ret;
+        return vectors.length;
     }
 
     public VectorOrientation getOrientation() {
         // TODO: return orientation
-        vectors[0].readLock();
-        VectorOrientation ret = vectors[0].getOrientation();
-        vectors[0].readUnlock();
-        return ret;
+        if (vectors == null || vectors.length == 0) {
+            return VectorOrientation.ROW_MAJOR;
+        }
+        return vectors[0].getOrientation();
     }
 
     private void acquireAllVectorReadLocks(SharedVector[] vecs) {
@@ -128,7 +125,7 @@ public class SharedMatrix {
     private void releaseAllVectorWriteLocks(SharedVector[] vecs) {
         // TODO: release write locks
         for (SharedVector vector : vecs){
-            vector.readUnlock();
+            vector.writeUnlock();
         }
     }
 }
