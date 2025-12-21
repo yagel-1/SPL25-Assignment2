@@ -56,7 +56,10 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
      * it throws IllegalStateException.
      */
     public void newTask(Runnable task) {
-       // TODO
+        boolean status = handoff.add(task);
+        if (!status) {
+            throw new IllegalStateException("worker is busy");
+        }
     }
 
     /**
@@ -64,7 +67,16 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
      * Inserts a poison pill so the worker wakes up and exits.
      */
     public void shutdown() {
-       // TODO
+        this.alive.set(false);
+        boolean accepted = false;
+        while (!accepted) {
+            try {
+            newTask(POISON_PILL);
+            accepted = true;
+            }
+            catch (IllegalStateException e){
+            }
+        }
     }
 
     @Override
@@ -74,7 +86,9 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
 
     @Override
     public int compareTo(TiredThread o) {
-        // TODO
-        return 0;
+    // TODO
+    double myFatigue = this.getFatigue();
+    double otherFatigue = o.getFatigue();
+    return Double.compare(myFatigue, otherFatigue);
     }
 }
