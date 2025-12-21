@@ -29,10 +29,11 @@ public class SharedMatrix {
             this.vectors = new SharedVector[0];
         }
         else{
-            this.vectors = new SharedVector[matrix.length];
+            SharedVector[] newVector = new SharedVector[matrix.length];
             for (int i = 0; i < matrix.length ; i++){
-                this.vectors[i] = new SharedVector(matrix[i], VectorOrientation.ROW_MAJOR); 
+                newVector[i] = new SharedVector(matrix[i], VectorOrientation.ROW_MAJOR); 
             }
+            this.vectors = newVector;
         }
     }
 
@@ -42,14 +43,15 @@ public class SharedMatrix {
             this.vectors = new SharedVector[0];
         }
         else {
-            this.vectors = new SharedVector[matrix[0].length];
+            SharedVector[] newVector = new SharedVector[matrix[0].length];
             for (int i=0; i < matrix[0].length ; i++){
                 double[] colVec = new double[matrix.length];
-                for (int j = 0; j < matrix.length; j++){
+                for (int j=0; j < matrix.length; j++){
                     colVec[j] = matrix[j][i];
                 }
-                this.vectors[i] = new SharedVector(colVec, VectorOrientation.COLUMN_MAJOR);
+                newVector[i] = new SharedVector(colVec, VectorOrientation.COLUMN_MAJOR);
             }
+            this.vectors = newVector;
         }
     }
 
