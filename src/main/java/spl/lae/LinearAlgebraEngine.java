@@ -15,6 +15,7 @@ public class LinearAlgebraEngine {
 
     public LinearAlgebraEngine(int numThreads) {
         // TODO: create executor with given thread count
+        executor = new TiredExecutor(numThreads);
     }
 
     public ComputationNode run(ComputationNode computationRoot) {
@@ -34,6 +35,41 @@ public class LinearAlgebraEngine {
     public void loadAndCompute(ComputationNode node) {
         // TODO: load operand matrices
         // TODO: create compute tasks & submit tasks to executor
+        List<ComputationNode> children = node.getChildren();
+        switch (node.getNodeType()) {
+            case ComputationNodeType.ADD:
+                {
+                    leftMatrix.loadRowMajor(children.getFirst().getMatrix());
+                    rightMatrix.loadRowMajor(children.getLast().getMatrix());
+                    executor.submitAll(createAddTasks());
+                    break;
+                }
+            case ComputationNodeType.MULTIPLY:
+                {
+                    leftMatrix.loadRowMajor(children.getFirst().getMatrix());
+                    rightMatrix.loadColumnMajor(children.getLast().getMatrix());
+                    executor.submitAll(createMultiplyTasks());
+                    break;
+                }
+                
+            case ComputationNodeType.NEGATE:
+                {
+                    leftMatrix.loadRowMajor(children.getFirst().getMatrix());
+                    executor.submitAll(createNegateTasks());
+                    break;
+                }
+                
+            case ComputationNodeType.TRANSPOSE:
+                {
+                    leftMatrix.loadRowMajor(children.getFirst().getMatrix());
+                    executor.submitAll(createTransposeTasks());
+                    break;
+                }
+                
+            default:
+                throw new IllegalArgumentException("Unknown operator: " + node.getNodeType());
+        }
+
     }
 
     public List<Runnable> createAddTasks() {
@@ -51,7 +87,14 @@ public class LinearAlgebraEngine {
 
     public List<Runnable> createMultiplyTasks() {
         // TODO: return tasks that perform row × matrix multiplication
-        return null;
+        List<Runnable> tasks = new ArrayList<>();
+        for (int i=0; i<leftMatrix.length(); i++){
+            int rowIndex = i;
+            tasks.add(()->{
+                leftMatrix.get(rowIndex).vecMatMul(rightMatrix);
+            });
+        }
+        return tasks;
     }
 
     public List<Runnable> createNegateTasks() {
@@ -68,7 +111,14 @@ public class LinearAlgebraEngine {
 
     public List<Runnable> createTransposeTasks() {
         // TODO: return tasks that transpose rows
-        return null;
+        List<Runnable> tasks = new ArrayList<>();
+        for (int i=0; i<leftMatrix.length(); i++){
+            int rowIndex = i;
+            tasks.add(()->{
+                leftMatrix.get(rowIndex).transpose();;
+            });
+        }
+        return tasks;
     }
 
     public String getWorkerReport() {
