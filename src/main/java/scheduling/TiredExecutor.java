@@ -18,9 +18,7 @@ public class TiredExecutor {
             double fatigueFactor = 0.5 + Math.random();
             workers[i] = new TiredThread(i, fatigueFactor);
             idleMinHeap.add(workers[i]);
-        }
-        for (TiredThread worker : workers){
-            worker.start();
+            workers[i].start();
         }
     }
 
@@ -28,11 +26,24 @@ public class TiredExecutor {
         // TODO
         try{
             TiredThread worker = idleMinHeap.take();
-            worker.newTask(task);
-            //idleMinHeap.put(worker);
-            inFlight.addAndGet(1);
+            inFlight.incrementAndGet();
+            Runnable newTask = ()->{
+                try{
+                    task.run();
+                }
+                finally{
+                    if (worker.isAlive()){
+                        idleMinHeap.add(worker);
+                    }
+                    inFlight.decrementAndGet();
+                    synchronized (this){
+                        notifyAll();
+                    }
+                }
+            };
+            worker.newTask(newTask);            
         } catch (InterruptedException ex){
-            System.out.println(ex);
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -41,11 +52,25 @@ public class TiredExecutor {
         for (Runnable task : tasks){
             submit(task);
         }
+        try{
+            synchronized (this){
+                while (inFlight.get() > 0){
+                    wait();
+                }
+                shutdown();
+            }
+        }
+        catch (InterruptedException ex){
+            Thread.currentThread().interrupt();
+        }
     }
 
     public void shutdown() throws InterruptedException {
         // TODO
-
+        for (TiredThread worker : workers){
+            worker.shutdown();
+        }
+        idleMinHeap.clear();
     }
 
     public synchronized String getWorkerReport() {
