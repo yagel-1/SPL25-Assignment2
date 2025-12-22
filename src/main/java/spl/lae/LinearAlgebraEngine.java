@@ -4,6 +4,7 @@ import parser.*;
 import memory.*;
 import scheduling.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LinearAlgebraEngine {
@@ -18,7 +19,16 @@ public class LinearAlgebraEngine {
 
     public ComputationNode run(ComputationNode computationRoot) {
         // TODO: resolve computation tree step by step until final matrix is produced
-        return null;
+        computationRoot.associativeNesting();
+        ComputationNode curr = computationRoot.findResolvable();
+        while (curr != null) {
+            loadAndCompute(curr);
+            curr.resolve(leftMatrix.readRowMajor());
+            curr = computationRoot.findResolvable();
+        }
+        return computationRoot;
+        
+
     }
 
     public void loadAndCompute(ComputationNode node) {
@@ -28,7 +38,15 @@ public class LinearAlgebraEngine {
 
     public List<Runnable> createAddTasks() {
         // TODO: return tasks that perform row-wise addition
-        return null;
+        List<Runnable> tasks = new ArrayList<>();
+        for (int i=0; i<leftMatrix.length(); i++){
+            int rowIndex = i;
+            tasks.add(()->{
+                leftMatrix.get(rowIndex).add(rightMatrix.get(rowIndex));
+            });
+        }
+        return tasks;
+
     }
 
     public List<Runnable> createMultiplyTasks() {
@@ -38,7 +56,14 @@ public class LinearAlgebraEngine {
 
     public List<Runnable> createNegateTasks() {
         // TODO: return tasks that negate rows
-        return null;
+        List<Runnable> tasks = new ArrayList<>();
+        for (int i=0; i<leftMatrix.length(); i++){
+            int rowIndex = i;
+            tasks.add(()->{
+                leftMatrix.get(rowIndex).negate();
+            });
+        }
+        return tasks;
     }
 
     public List<Runnable> createTransposeTasks() {
@@ -48,6 +73,6 @@ public class LinearAlgebraEngine {
 
     public String getWorkerReport() {
         // TODO: return summary of worker activity
-        return null;
+        return executor.getWorkerReport();
     }
 }
