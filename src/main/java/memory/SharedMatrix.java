@@ -24,7 +24,9 @@ public class SharedMatrix {
             for (int i = 0; i < matrix.length ; i++){
                 newVector[i] = new SharedVector(matrix[i], VectorOrientation.ROW_MAJOR); 
             }
+            acquireAllVectorWriteLocks(vectors);
             this.vectors = newVector;
+            releaseAllVectorWriteLocks(vectors);
         }
     }
 
@@ -42,7 +44,9 @@ public class SharedMatrix {
                 }
                 newVector[i] = new SharedVector(colVec, VectorOrientation.COLUMN_MAJOR);
             }
+            acquireAllVectorWriteLocks(vectors);
             this.vectors = newVector;
+            releaseAllVectorWriteLocks(vectors);
         }
     }
 
@@ -57,13 +61,15 @@ public class SharedMatrix {
             if (this.getOrientation() == VectorOrientation.ROW_MAJOR) { 
                 ret = new double[this.length()][this.get(0).length()];
                 for (int i = 0; i < this.length(); i++){
-                    ret[i] = vectors[i].getVector(); 
+                    for (int j = 0; j < this.get(0).length(); j++){
+                        ret[i][j] = this.get(i).get(j);
+                    }
                 }
             }
             else{
-                ret = new double[this.get(0).length()][vectors.length];
+                ret = new double[this.get(0).length()][this.length()];
                 for (int i = 0; i < this.get(0).length(); i++){
-                    for (int j = 0; j < vectors.length ; j++){
+                    for (int j = 0; j < this.length() ; j++){
                         ret[i][j] = this.get(j).get(i);
                     }
                 }
