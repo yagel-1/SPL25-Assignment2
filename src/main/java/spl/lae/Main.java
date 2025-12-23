@@ -35,5 +35,6 @@ public class Main {
           System.out.println("Critical error: Failed to write error message to file.");
         }
       }
+      System.out.println(lae.getWorkerReport());
     }
 }

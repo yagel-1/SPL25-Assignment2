@@ -17,13 +17,16 @@ public class TiredExecutor {
         for (int i=0; i<numThreads; i++){
             double fatigueFactor = 0.5 + Math.random();
             workers[i] = new TiredThread(i, fatigueFactor);
-            idleMinHeap.add(workers[i]);
+            idleMinHeap.put(workers[i]);
             workers[i].start();
         }
     }
 
     public void submit(Runnable task) {
         // TODO
+        if (task == null){
+            throw new IllegalArgumentException("task is null");
+        }
         try{
             TiredThread worker = idleMinHeap.take();
             inFlight.incrementAndGet();
@@ -33,12 +36,12 @@ public class TiredExecutor {
                 }
                 finally{
                     if (worker.isAlive()){
-                        idleMinHeap.add(worker);
+                        idleMinHeap.put(worker);
                     }
                     inFlight.decrementAndGet();
-                    // synchronized (this){
-                    //     notifyAll();
-                    // }
+                    synchronized (this){
+                        notifyAll();
+                    }
                 }
             };
             worker.newTask(newTask);            
@@ -75,8 +78,15 @@ public class TiredExecutor {
     public synchronized String getWorkerReport() {
         // TODO: return readable statistics for each worker
         StringBuilder report = new StringBuilder();
+        double avgFatigue = 0.0;
         for (TiredThread worker : workers){
-            report.append("worker: "+ worker.getWorkerId()+ ", time used: "+ worker.getTimeUsed()+", time idle: "+worker.getTimeIdle()+"\n");
+            avgFatigue += worker.getFatigue();
+        }
+        avgFatigue = avgFatigue / workers.length;
+        for (TiredThread worker : workers){
+            report.append("worker: "+ worker.getWorkerId()+ ", time used: "+ worker.getTimeUsed()+
+                ", time idle: "+worker.getTimeIdle()+", fatigue: "+worker.getFatigue()+
+                ", Fatigue deviation: "+(worker.getFatigue()-avgFatigue)+"\n");
         }
         return report.toString();
     }

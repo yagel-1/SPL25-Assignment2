@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="SharedMatrixTest" time="0.044" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="LinearAlgebraEngineTest" time="0.952" tests="15" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -58,7 +58,19 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="testLoadRowMajor" classname="SharedMatrixTest" time="0.011"/>
-  <testcase name="testReadRowMajor" classname="SharedMatrixTest" time="0.004"/>
-  <testcase name="testLoadColumnMajor" classname="SharedMatrixTest" time="0.004"/>
+  <testcase name="testMultiplySingleThreaded" classname="LinearAlgebraEngineTest" time="0.105"/>
+  <testcase name="testNegateSingleThreaded" classname="LinearAlgebraEngineTest" time="0.009"/>
+  <testcase name="testAddition" classname="LinearAlgebraEngineTest" time="0.038"/>
+  <testcase name="testTransposeRectangularMatrix" classname="LinearAlgebraEngineTest" time="0.01"/>
+  <testcase name="testTransposeSingleThreaded" classname="LinearAlgebraEngineTest" time="0.005"/>
+  <testcase name="testAdditionLargeMatrices" classname="LinearAlgebraEngineTest" time="0.044"/>
+  <testcase name="testMultiplyDimensionsMismatch" classname="LinearAlgebraEngineTest" time="0.007"/>
+  <testcase name="testAddMultipleChildren" classname="LinearAlgebraEngineTest" time="0.006"/>
+  <testcase name="testNegate" classname="LinearAlgebraEngineTest" time="0.003"/>
+  <testcase name="testAddDifferentSizes" classname="LinearAlgebraEngineTest" time="0.004"/>
+  <testcase name="testTranspose" classname="LinearAlgebraEngineTest" time="0.003"/>
+  <testcase name="testMultiplyValid" classname="LinearAlgebraEngineTest" time="0.003"/>
+  <testcase name="testMultiplyLargeMatrices" classname="LinearAlgebraEngineTest" time="0.564"/>
+  <testcase name="testTransposeSquareMatrix" classname="LinearAlgebraEngineTest" time="0.01"/>
+  <testcase name="testAdditionSingleThreaded" classname="LinearAlgebraEngineTest" time="0.007"/>
 </testsuite>

@@ -24,9 +24,9 @@ public class SharedMatrix {
             for (int i = 0; i < matrix.length ; i++){
                 newVector[i] = new SharedVector(matrix[i], VectorOrientation.ROW_MAJOR); 
             }
-            acquireAllVectorWriteLocks(vectors);
+            //acquireAllVectorWriteLocks(vectors);
             this.vectors = newVector;
-            releaseAllVectorWriteLocks(vectors);
+            //releaseAllVectorWriteLocks(vectors);
         }
     }
 
@@ -44,9 +44,9 @@ public class SharedMatrix {
                 }
                 newVector[i] = new SharedVector(colVec, VectorOrientation.COLUMN_MAJOR);
             }
-            acquireAllVectorWriteLocks(vectors);
+            //acquireAllVectorWriteLocks(vectors);
             this.vectors = newVector;
-            releaseAllVectorWriteLocks(vectors);
+            //releaseAllVectorWriteLocks(vectors);
         }
     }
 
