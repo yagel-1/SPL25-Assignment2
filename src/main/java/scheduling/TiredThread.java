@@ -72,8 +72,8 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
         boolean accepted = false;
         while (!accepted) {
             try {
-            newTask(POISON_PILL);
-            accepted = true;
+                newTask(POISON_PILL);
+                accepted = true;
             }
             catch (IllegalStateException e){
             }
@@ -114,4 +114,5 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
         double otherFatigue = o.getFatigue();
         return Double.compare(myFatigue, otherFatigue);
     }
+
 }
