@@ -30,7 +30,7 @@ public class LinearAlgebraEngine {
         try{
             executor.shutdown();
         } catch (Exception e){
-            Thread.currentThread().interrupt();
+            //Thread.currentThread().interrupt();
         }
         return computationRoot;
         

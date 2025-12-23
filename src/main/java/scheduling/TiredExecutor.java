@@ -36,14 +36,14 @@ public class TiredExecutor {
                         idleMinHeap.add(worker);
                     }
                     inFlight.decrementAndGet();
-                    synchronized (this){
-                        notifyAll();
-                    }
+                    // synchronized (this){
+                    //     notifyAll();
+                    // }
                 }
             };
             worker.newTask(newTask);            
         } catch (InterruptedException ex){
-            Thread.currentThread().interrupt();
+            //Thread.currentThread().interrupt();
         }
     }
 
@@ -60,7 +60,7 @@ public class TiredExecutor {
             }
         }
         catch (InterruptedException ex){
-            Thread.currentThread().interrupt();
+            //Thread.currentThread().interrupt();
         }
     }
 
