@@ -108,9 +108,9 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
 
     @Override
     public int compareTo(TiredThread o) {
-    // TODO
-    double myFatigue = this.getFatigue();
-    double otherFatigue = o.getFatigue();
-    return Double.compare(myFatigue, otherFatigue);
+        // TODO
+        double myFatigue = this.getFatigue();
+        double otherFatigue = o.getFatigue();
+        return Double.compare(myFatigue, otherFatigue);
     }
 }

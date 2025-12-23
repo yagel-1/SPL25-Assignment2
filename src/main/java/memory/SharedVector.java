@@ -73,6 +73,7 @@ public class SharedVector {
     public void add(SharedVector other) {
         // TODO: add two vectors
         writeLock();
+        other.readLock();
         if (this.length() != other.length()){
             throw new IllegalArgumentException("vectors must be in the same size");
         }
@@ -83,6 +84,7 @@ public class SharedVector {
             this.vector[i] += other.get(i);
         }
         writeUnlock();
+        other.readUnlock();
     }
 
     public void negate() {
@@ -96,7 +98,8 @@ public class SharedVector {
 
     public double dot(SharedVector other) {
         // TODO: compute dot product (row · column)
-        writeLock();
+        readLock();
+        other.readLock();
         if (this.getOrientation() != VectorOrientation.ROW_MAJOR) {
             throw new IllegalArgumentException("vector must be orianted in row");
         }
@@ -111,7 +114,8 @@ public class SharedVector {
         for (int i=0; i<length(); i++){
             sum = sum + (this.get(i) * other.get(i));
         }
-        writeUnlock();
+        readUnlock();
+        other.readUnlock();
         return sum;
     }
 

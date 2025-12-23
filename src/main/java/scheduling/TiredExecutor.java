@@ -57,7 +57,6 @@ public class TiredExecutor {
                 while (inFlight.get() > 0){
                     wait();
                 }
-                shutdown();
             }
         }
         catch (InterruptedException ex){

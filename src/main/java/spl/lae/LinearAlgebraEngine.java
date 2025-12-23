@@ -27,9 +27,13 @@ public class LinearAlgebraEngine {
             curr.resolve(leftMatrix.readRowMajor());
             curr = computationRoot.findResolvable();
         }
+        try{
+            executor.shutdown();
+        } catch (Exception e){
+            Thread.currentThread().interrupt();
+        }
         return computationRoot;
         
-
     }
 
     public void loadAndCompute(ComputationNode node) {
@@ -39,29 +43,36 @@ public class LinearAlgebraEngine {
         switch (node.getNodeType()) {
             case ComputationNodeType.ADD:
                 {
-                    leftMatrix.loadRowMajor(children.getFirst().getMatrix());
-                    rightMatrix.loadRowMajor(children.getLast().getMatrix());
+                    if (children.get(0).getMatrix().length != children.get(1).getMatrix().length ||
+                        children.get(0).getMatrix()[0].length != children.get(1).getMatrix()[0].length ){
+                        throw new IllegalArgumentException("Illegal operation: dimensions mismatch");
+                    }
+                    leftMatrix.loadRowMajor(children.get(0).getMatrix());
+                    rightMatrix.loadRowMajor(children.get(1).getMatrix());
                     executor.submitAll(createAddTasks());
                     break;
                 }
             case ComputationNodeType.MULTIPLY:
                 {
-                    leftMatrix.loadRowMajor(children.getFirst().getMatrix());
-                    rightMatrix.loadColumnMajor(children.getLast().getMatrix());
+                    if (children.get(0).getMatrix()[0].length != children.get(1).getMatrix().length){
+                        throw new IllegalArgumentException("Illegal operation: dimensions mismatch");
+                    }
+                    leftMatrix.loadRowMajor(children.get(0).getMatrix());
+                    rightMatrix.loadColumnMajor(children.get(1).getMatrix());
                     executor.submitAll(createMultiplyTasks());
                     break;
                 }
                 
             case ComputationNodeType.NEGATE:
                 {
-                    leftMatrix.loadRowMajor(children.getFirst().getMatrix());
+                    leftMatrix.loadRowMajor(children.get(0).getMatrix());
                     executor.submitAll(createNegateTasks());
                     break;
                 }
                 
             case ComputationNodeType.TRANSPOSE:
                 {
-                    leftMatrix.loadRowMajor(children.getFirst().getMatrix());
+                    leftMatrix.loadRowMajor(children.get(0).getMatrix());
                     executor.submitAll(createTransposeTasks());
                     break;
                 }
