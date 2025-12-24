@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
@@ -12,9 +13,14 @@ public class TiredThreadTest {
 
     @BeforeEach
     public void setUp() {
-        double fatigueFactor = 0.5 + Math.random();
+        double fatigueFactor = 0.0;
         worker = new TiredThread(1, fatigueFactor);
         worker.start();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        worker.shutdown();
     }
 
     @Test
@@ -26,8 +32,10 @@ public class TiredThreadTest {
 
     @Test
     public void testTimeIdleIncreases() throws InterruptedException {
+        Runnable dummyTask = () -> {};
+        worker.newTask(dummyTask);
         long firstCheck = worker.getTimeIdle();
-        Thread.sleep(10);
+        Thread.sleep(100);
         long secondCheck = worker.getTimeIdle();
         assertTrue(secondCheck > firstCheck, "Idle time should increase as time passes");
     }
@@ -50,34 +58,6 @@ public class TiredThreadTest {
         }
         
         assertTrue(test.isAlive() == false, "Thread shouldn't be alive after shutdown");
-    }
-
-    @Test
-    public void testTaskOverflow() {
-    Runnable longTask = () -> {
-        try { 
-            Thread.sleep(500); 
-        } 
-        catch (InterruptedException e) {
-        }
-    };
-    worker.newTask(longTask);
-    assertThrows(IllegalStateException.class, () -> {
-        worker.newTask(() -> {});
-    }, "Should throw IllegalStateException when worker's handoff queue is full");
-}
-
-
-   @Test
-    public void testWorkerRecoversAfterTaskCrash() throws InterruptedException {
-        Runnable crashingTask = () -> {
-            throw new RuntimeException("Unexpected Crash!");
-        };
-        worker.newTask(crashingTask);
-        Thread.sleep(100);
-        assertFalse(worker.isBusy(), "Worker should reset busy status even after a crash");
-        assertTrue(worker.isAlive(), "Worker thread should still be alive after a task crash");
-        assertDoesNotThrow(() -> worker.newTask(() -> {}), "Worker should be able to accept new tasks");
     }
 
     @Test

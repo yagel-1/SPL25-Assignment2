@@ -92,12 +92,14 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
                     Long endTime = System.nanoTime();
                     timeUsed.addAndGet(endTime - startime);
                     idleStartTime.set(endTime);
-                    busy.set(false);
                 }
             }
             catch (InterruptedException e){
                 //Thread.currentThread().interrupt();
                 //return;
+            }
+            finally{
+                busy.set(false);
             }
        }
     }
