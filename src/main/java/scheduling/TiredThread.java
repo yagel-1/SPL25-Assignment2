@@ -56,11 +56,10 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
      * it throws IllegalStateException.
      */
     public void newTask(Runnable task) {
+        if ((!handoff.isEmpty() && handoff.peek().equals(POISON_PILL))){
+            throw new IllegalStateException("worker is shutting down");
+        }
         handoff.add(task);
-        //boolean status = 
-        // if (!status) {
-        //     throw new IllegalStateException("worker is busy");
-        // }
     }
 
     /**
@@ -69,14 +68,10 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
      */
     public void shutdown() {
         this.alive.set(false);
-        boolean accepted = false;
-        while (!accepted) {
-            try {
-                newTask(POISON_PILL);
-                accepted = true;
-            }
-            catch (IllegalStateException e){
-            }
+        try {
+            handoff.put(POISON_PILL);
+        }
+        catch (InterruptedException e){
         }
     }
 

@@ -28,6 +28,9 @@ public class TiredExecutor {
             throw new IllegalArgumentException("task is null");
         }
         try{
+            if (inFlight.get() < 0){
+                return;
+            }
             TiredThread worker = idleMinHeap.take();
             inFlight.incrementAndGet();
             Runnable newTask = ()->{
@@ -35,7 +38,7 @@ public class TiredExecutor {
                     task.run();
                 }
                 finally{
-                    if (worker.isAlive()){
+                    if (inFlight.get() > 0 && worker.isAlive()){
                         idleMinHeap.put(worker);
                     }
                     inFlight.decrementAndGet();
@@ -44,7 +47,11 @@ public class TiredExecutor {
                     }
                 }
             };
-            worker.newTask(newTask);            
+            try {
+                worker.newTask(newTask);
+            } catch (IllegalStateException e) {
+                inFlight.decrementAndGet();
+            }            
         } catch (InterruptedException ex){
             //Thread.currentThread().interrupt();
         }
@@ -53,6 +60,9 @@ public class TiredExecutor {
     public void submitAll(Iterable<Runnable> tasks) {
         // TODO: submit tasks one by one and wait until all finish
         for (Runnable task : tasks){
+            if (inFlight.get() < 0){
+                continue;
+            }
             submit(task);
         }
         try{
@@ -69,6 +79,7 @@ public class TiredExecutor {
 
     public void shutdown() throws InterruptedException {
         // TODO
+        inFlight.set(-1);
         for (TiredThread worker : workers){
             worker.shutdown();
         }
