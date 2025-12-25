@@ -292,4 +292,76 @@ public class LinearAlgebraEngineTest {
         }
         return newMatrix;
     }
+
+    @Test
+    void testAliasingSameMatrix() {
+        double[][] data = {{1, 2}, {3, 4}};
+        ComputationNode nodeA = new ComputationNode(data);
+        ComputationNode root = new ComputationNode(ComputationNodeType.ADD, List.of(nodeA, nodeA));
+        lae = new LinearAlgebraEngine(4);
+        double[][] res = lae.run(root).getMatrix();
+        double[][] expected = {{2, 4}, {6, 8}};
+        assertArrayEquals(expected, res);
+    }
+
+    @Test
+    void testRectangularTranspose() {
+        double[][] data = {{1, 2, 3}}; 
+        ComputationNode nodeA = new ComputationNode(data);
+        ComputationNode root = new ComputationNode(ComputationNodeType.TRANSPOSE, List.of(nodeA));
+        
+        lae = new LinearAlgebraEngine(1);
+        double[][] res = lae.run(root).getMatrix();
+        
+        assertEquals(3, res.length);  
+        assertEquals(1, res[0].length); 
+    }
+
+    @Test
+    void testSingleNodeTree() {
+        double[][] data = {{42, 10}};
+        ComputationNode root = new ComputationNode(data); // רק מטריצה, בלי אופרטור
+        
+        lae = new LinearAlgebraEngine(1);
+        double[][] res = lae.run(root).getMatrix();
+        
+        assertArrayEquals(data, res);
+    }
+
+
+    // @Test
+    // void testEngineReuseFails() {
+    //     double[][] data = {{1, 1}, {1, 1}};
+    //     ComputationNode a = new ComputationNode(data);
+    //     ComputationNode b = new ComputationNode(data);
+    //     ComputationNode root1 = new ComputationNode(ComputationNodeType.ADD, List.of(a, b));
+    //     lae = new LinearAlgebraEngine(2);
+    //     lae.run(root1); 
+    //     ComputationNode root2 = new ComputationNode(ComputationNodeType.ADD, List.of(a, b));
+    //     assertThrows(IllegalStateException.class, () -> {
+    //         lae.run(root2);
+    //     }, "Should throw IllegalStateException when trying to compute with a closed engine");
+    // }
+
+    @Test
+    void testHighThreadLowWorkload() {
+        double[][] data = {{5}};
+        ComputationNode n1 = new ComputationNode(data);
+        ComputationNode n2 = new ComputationNode(data);
+        ComputationNode root = new ComputationNode(ComputationNodeType.ADD, List.of(n1, n2));
+        
+        lae = new LinearAlgebraEngine(100); 
+        double[][] res = lae.run(root).getMatrix();
+        
+        assertEquals(10.0, res[0][0]);
+    }
+
+   @Test
+    void testZeroThreadsEngine() {
+            assertThrows(IllegalArgumentException.class, () -> {
+            new LinearAlgebraEngine(0);
+        }, "Constructor should throw IllegalArgumentException for 0 threads");
+    }
 }
+
+
