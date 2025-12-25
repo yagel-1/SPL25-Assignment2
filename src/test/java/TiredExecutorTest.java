@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.DoubleAdder;
 
 import scheduling.TiredExecutor;
 import scheduling.TiredThread;
@@ -205,23 +206,23 @@ public class TiredExecutorTest {
         // }
     }
 
-    // @Test
-    // public void testSubmitAfterShutdown() {
-    //     try{
-    //         executor.shutdown();
-    //     } catch (Exception e){}
-    //     Runnable task = () -> {};
-    //     assertThrows(IllegalStateException.class, () -> {
-    //         executor.submit(task);
-    //     });
-    // }
+    @Test
+    public void testSubmitAfterShutdown() {
+        try{
+            executor.shutdown();
+        } catch (Exception e){}
+        Runnable task = () -> {};
+        assertThrows(IllegalStateException.class, () -> {
+            executor.submit(task);
+        });
+    }
 
     @Test
     public void testShutDownFinishCurrTasks() {
         AtomicInteger counter = new AtomicInteger(0);
         Runnable task = () -> {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
                 counter.incrementAndGet();
             } catch (InterruptedException e) {}
             finally {
@@ -237,6 +238,47 @@ public class TiredExecutorTest {
         executor.submitAll(tasks);
         // assertTrue(heap.isEmpty());
         assertTrue(counter.get() < 5);
+    }
+
+    @Test
+    public void testFairnessAndCorrectness() {
+        int numThreads = 5;
+        int numTasks = 1000;
+        int loopSize = 1000;
+
+        TiredExecutor executor5 = new TiredExecutor(numThreads);
+
+        double expectedSingleTaskResult = 0;
+        for (int j = 0; j < loopSize; j++) {
+            expectedSingleTaskResult += Math.sqrt(j);
+        }
+
+        double totalExpectedResult = expectedSingleTaskResult * numTasks;
+        DoubleAdder totalActualResult = new DoubleAdder();
+        AtomicInteger completedTasksCount = new AtomicInteger(0);
+
+        List<Runnable> tasks = new ArrayList<>();
+        for (int i = 0; i < numTasks; i++) {
+            tasks.add(() -> {
+                double localSum = 0;
+                // ביצוע החישוב
+                for (int j = 0; j < loopSize; j++) {
+                    localSum += Math.sqrt(j);
+                }
+                // הוספת התוצאה למשתנה המשותף
+                totalActualResult.add(localSum);
+                // עדכון מונה המשימות שהסתיימו
+                completedTasksCount.incrementAndGet();
+            });
+        }
+
+        executor5.submitAll(tasks);
+
+        System.out.println(executor5.getWorkerReport());
+
+        assertEquals(numTasks, completedTasksCount.get(), "Not all tasks were executed!");
+
+        assertEquals(totalExpectedResult, totalActualResult.sum(), 0.1, "Calculation result mismatch!");
     }
 
 }

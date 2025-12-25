@@ -21,13 +21,15 @@ public class Main {
       String inputPathString = args[1];
       String outputPathString = args[2];
 
-      LinearAlgebraEngine lae = new LinearAlgebraEngine(numOfThreads);
+      
       InputParser parser = new InputParser();
 
       try{
         ComputationNode computationRoot = parser.parse(inputPathString);
+        LinearAlgebraEngine lae = new LinearAlgebraEngine(numOfThreads);
         ComputationNode result = lae.run(computationRoot);
         OutputWriter.write(result.getMatrix(), outputPathString);
+        System.out.println(lae.getWorkerReport());
       } catch(Exception errorMsg){
         try{
           OutputWriter.write(errorMsg.getMessage(), outputPathString);
@@ -35,6 +37,5 @@ public class Main {
           System.out.println("Critical error: Failed to write error message to file.");
         }
       }
-      System.out.println(lae.getWorkerReport());
     }
 }

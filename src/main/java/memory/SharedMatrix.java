@@ -16,7 +16,7 @@ public class SharedMatrix {
 
     public void loadRowMajor(double[][] matrix) {
         // TODO: replace internal data with new row-major matrix
-        if (matrix == null || matrix.length == 0) {
+        if (matrix == null || matrix.length == 0 || matrix[0] == null || matrix[0].length == 0) {
             this.vectors = new SharedVector[0];
         }
         else{
@@ -24,15 +24,13 @@ public class SharedMatrix {
             for (int i = 0; i < matrix.length ; i++){
                 newVector[i] = new SharedVector(matrix[i], VectorOrientation.ROW_MAJOR); 
             }
-            //acquireAllVectorWriteLocks(vectors);
             this.vectors = newVector;
-            //releaseAllVectorWriteLocks(vectors);
         }
     }
 
     public void loadColumnMajor(double[][] matrix) {
         // TODO: replace internal data with new column-major matrix
-        if (matrix == null || matrix.length == 0) {
+        if (matrix == null || matrix.length == 0 || matrix[0] == null || matrix[0].length == 0) {
             this.vectors = new SharedVector[0];
         }
         else {
@@ -44,9 +42,7 @@ public class SharedMatrix {
                 }
                 newVector[i] = new SharedVector(colVec, VectorOrientation.COLUMN_MAJOR);
             }
-            //acquireAllVectorWriteLocks(vectors);
             this.vectors = newVector;
-            //releaseAllVectorWriteLocks(vectors);
         }
     }
 
@@ -54,7 +50,7 @@ public class SharedMatrix {
         // TODO: return matrix contents as a row-major double[][]
         try{
             acquireAllVectorReadLocks(vectors);
-            if (vectors == null || vectors.length == 0) {
+            if (vectors == null || vectors.length == 0 || vectors[0] == null || vectors[0].length() == 0) {
                 return new double[0][0];
             }
             double[][] ret;

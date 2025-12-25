@@ -13,6 +13,10 @@ public class SharedVectorTest {
     double[] vector4 = {0, 0, 0, 0, 0};
     double[] vector5 = {-2, 0};
 
+    double[] singleData = {5};
+    double[] emptyData = {};
+    double[] zerosData = {0, 0, 0};
+
     double[][] matrix1 = {
         {1, 2},
         {3, 4},
@@ -121,5 +125,48 @@ public class SharedVectorTest {
         }
 
         assertThrows(IllegalArgumentException.class, ()->{sv2.vecMatMul(sm1);});
+    }
+
+    @Test
+    public void testAddDimensionMismatch() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            sv1.add(sv4);
+        });
+    }
+
+    @Test
+    public void testDotDimensionMismatch() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            sv1.dot(sv4);
+        });
+    }
+
+    @Test
+    public void testSingleElementVector() {
+        SharedVector singleVec = new SharedVector(singleData, VectorOrientation.ROW_MAJOR);
+
+        singleVec.transpose();
+        assertEquals(VectorOrientation.COLUMN_MAJOR, singleVec.getOrientation());
+        singleVec.transpose();
+        assertEquals(VectorOrientation.ROW_MAJOR, singleVec.getOrientation());
+
+        singleVec.negate();
+        assertEquals(-5, singleVec.get(0));
+    }
+
+    @Test
+    public void testEmptyVector() {
+        SharedVector emptyVec = new SharedVector(emptyData, VectorOrientation.ROW_MAJOR);
+        
+        assertEquals(0, emptyVec.length());
+        assertDoesNotThrow(() -> emptyVec.transpose());
+    }
+
+    @Test
+    public void testDotWithZeroVector() {
+        SharedVector zerosVec = new SharedVector(zerosData, VectorOrientation.COLUMN_MAJOR);
+
+        double result = sv1.dot(zerosVec);
+        assertEquals(0, result);
     }
 }

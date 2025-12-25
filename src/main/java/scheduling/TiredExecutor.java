@@ -27,10 +27,10 @@ public class TiredExecutor {
         if (task == null){
             throw new IllegalArgumentException("task is null");
         }
+        if (inFlight.get() < 0){
+            throw new IllegalStateException("Executor is shutdown");
+        }
         try{
-            if (inFlight.get() < 0){
-                return;
-            }
             TiredThread worker = idleMinHeap.take();
             inFlight.incrementAndGet();
             Runnable newTask = ()->{
@@ -38,9 +38,7 @@ public class TiredExecutor {
                     task.run();
                 }
                 finally{
-                    if (inFlight.get() > 0 && worker.isAlive()){
-                        idleMinHeap.put(worker);
-                    }
+                    idleMinHeap.put(worker);
                     inFlight.decrementAndGet();
                     synchronized (this){
                         notifyAll();
@@ -51,17 +49,18 @@ public class TiredExecutor {
                 worker.newTask(newTask);
             } catch (IllegalStateException e) {
                 inFlight.decrementAndGet();
+                synchronized (this){
+                    notifyAll();
+                }
             }            
-        } catch (InterruptedException ex){
-            //Thread.currentThread().interrupt();
-        }
+        } catch (InterruptedException ex){}
     }
 
     public void submitAll(Iterable<Runnable> tasks) {
         // TODO: submit tasks one by one and wait until all finish
         for (Runnable task : tasks){
             if (inFlight.get() < 0){
-                continue;
+                break;
             }
             submit(task);
         }
@@ -72,9 +71,7 @@ public class TiredExecutor {
                 }
             }
         }
-        catch (InterruptedException ex){
-            //Thread.currentThread().interrupt();
-        }
+        catch (InterruptedException ex){}
     }
 
     public void shutdown() throws InterruptedException {
@@ -84,6 +81,12 @@ public class TiredExecutor {
             worker.shutdown();
         }
         idleMinHeap.clear();
+        synchronized (this) {
+            notifyAll();
+        }
+        for (TiredThread worker : workers) {
+            worker.join(); 
+        }
     }
 
     public synchronized String getWorkerReport() {
@@ -94,11 +97,23 @@ public class TiredExecutor {
             avgFatigue += worker.getFatigue();
         }
         avgFatigue = avgFatigue / workers.length;
+        double totalSquaredDeviation = 0.0;
+
         for (TiredThread worker : workers){
-            report.append("worker: "+ worker.getWorkerId()+ ", time used: "+ worker.getTimeUsed()+
-                ", time idle: "+worker.getTimeIdle()+", fatigue: "+worker.getFatigue()+
-                ", Fatigue deviation: "+(worker.getFatigue()-avgFatigue)+"\n");
+            double fatigue = worker.getFatigue();
+            double deviation = fatigue - avgFatigue;
+            
+            totalSquaredDeviation += (deviation * deviation);
+
+            report.append("worker: ").append(worker.getWorkerId())
+                .append(", time used: ").append(worker.getTimeUsed())
+                .append(", time idle: ").append(worker.getTimeIdle())
+                .append(", fatigue: ").append(fatigue)
+                .append(", Deviation: ").append(deviation)
+                .append("\n");
         }
+        report.append("\n--- Fairness Score (Sum of Squared Deviations) ---\n");
+        report.append("Score: ").append(totalSquaredDeviation);
         return report.toString();
     }
 }

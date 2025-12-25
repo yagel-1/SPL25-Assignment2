@@ -22,18 +22,20 @@ public class LinearAlgebraEngine {
         // TODO: resolve computation tree step by step until final matrix is produced
         computationRoot.associativeNesting();
         ComputationNode curr = computationRoot.findResolvable();
-        while (curr != null) {
-            loadAndCompute(curr);
-            curr.resolve(leftMatrix.readRowMajor());
-            curr = computationRoot.findResolvable();
-        }
         try{
-            executor.shutdown();
-        } catch (Exception e){
-            //Thread.currentThread().interrupt();
+            while (curr != null) {
+                loadAndCompute(curr);
+                curr.resolve(leftMatrix.readRowMajor());
+                curr = computationRoot.findResolvable();
+            }
+        }
+        finally{
+            try{
+                executor.shutdown();
+            }
+            catch (InterruptedException e){}
         }
         return computationRoot;
-        
     }
 
     public void loadAndCompute(ComputationNode node) {

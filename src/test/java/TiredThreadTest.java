@@ -68,7 +68,7 @@ public class TiredThreadTest {
         worker.newTask(mediumTask);
         Thread shutdownThread = new Thread(() -> worker.shutdown());
         shutdownThread.start();
-        worker.join(1000); 
+        worker.join(300); 
         assertFalse(worker.isAlive(), "Worker should finish current task and then shutdown");
     }
 }

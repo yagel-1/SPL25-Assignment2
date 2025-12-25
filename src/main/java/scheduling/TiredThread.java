@@ -56,7 +56,7 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
      * it throws IllegalStateException.
      */
     public void newTask(Runnable task) {
-        if ((!handoff.isEmpty() && handoff.peek().equals(POISON_PILL))){
+        if (!alive.get() || (!handoff.isEmpty() && handoff.peek().equals(POISON_PILL))){
             throw new IllegalStateException("worker is shutting down");
         }
         handoff.add(task);
@@ -71,33 +71,29 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
         try {
             handoff.put(POISON_PILL);
         }
-        catch (InterruptedException e){
-        }
+        catch (InterruptedException e){}
     }
 
     @Override
     public void run() {
        // TODO
-        while (alive.get()) {
+        while (true) {
             try{
                 Runnable task = handoff.take();
                 if (task == POISON_PILL) {
                     return;
                 }
-                else{
-                    busy.set(true);
-                    Long startime = System.nanoTime();
-                    timeIdle.addAndGet(startime - idleStartTime.get());
-                    task.run();
-                    Long endTime = System.nanoTime();
-                    timeUsed.addAndGet(endTime - startime);
-                    idleStartTime.set(endTime);
-                }
+                busy.set(true);
+                Long startime = System.nanoTime();
+                timeIdle.addAndGet(startime - idleStartTime.get());
+
+                task.run();
+
+                Long endTime = System.nanoTime();
+                timeUsed.addAndGet(endTime - startime);
+                idleStartTime.set(endTime);
             }
-            catch (InterruptedException e){
-                //Thread.currentThread().interrupt();
-                //return;
-            }
+            catch (InterruptedException e){}
             finally{
                 busy.set(false);
             }

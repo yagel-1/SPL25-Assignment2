@@ -33,6 +33,33 @@ public class SharedMatrixTest {
         {7, 8, 9}
     };
 
+    double[][] single = {
+        {42.5}
+    };
+
+    double[][] zeros = {
+        {0, 0, 0},
+        {0, 0, 0}
+    };
+
+    double[][] wideMatrix = {
+        {10, 20, 30, 40}
+    };
+
+    double[][] tallMatrix = {
+        {1},
+        {2},
+        {3},
+        {4}
+    };
+
+    double[][] empty = {};
+
+    double[][] squareMatrix = {
+        {1, 3},
+        {2, 4}
+    };
+
     SharedMatrix sm1;
     SharedMatrix sm2;
     SharedMatrix sm3;
@@ -136,6 +163,68 @@ public class SharedMatrixTest {
         for (int i = 0; i < result3[0].length; i++) {
             for (int j = 0; j < result3.length; j++) {
                 assertEquals(result3[j][i], sm3.get(i).get(j));
+            }
+        }
+    }
+
+    @Test
+    public void testSingleElementMatrix() {
+        SharedMatrix smSingle = new SharedMatrix(new double[][]{{1, 2}, {3, 4}});
+        smSingle.loadRowMajor(single);
+        
+        double[][] result = smSingle.readRowMajor();
+        assertEquals(1, result.length);
+        assertEquals(1, result[0].length);
+        assertEquals(42.5, result[0][0]);
+    }
+
+    @Test
+    public void testZeroMatrix() {
+        sm1.loadRowMajor(zeros);
+        
+        double[][] result = sm1.readRowMajor();
+        for (int i = 0; i < zeros.length; i++) {
+            for (int j = 0; j < zeros[0].length; j++) {
+                assertEquals(0.0, result[i][j]);
+            }
+        }
+    }
+
+    @Test
+    public void testResizingMatrixDimensions() {
+        sm1.loadRowMajor(wideMatrix);
+        double[][] resultWide = sm1.readRowMajor();
+        
+        assertEquals(1, resultWide.length);
+        assertEquals(4, resultWide[0].length);
+        assertEquals(40, resultWide[0][3]);
+    
+        sm1.loadRowMajor(tallMatrix);
+        double[][] resultTall = sm1.readRowMajor();
+        
+        assertEquals(4, resultTall.length);
+        assertEquals(1, resultTall[0].length);
+        assertEquals(4, resultTall[3][0]);
+    }
+
+    @Test
+    public void testEmptyMatrix() {
+        try {
+            SharedMatrix smEmpty = new SharedMatrix(empty);
+            double[][] result = smEmpty.readRowMajor();
+            assertEquals(0, result.length);
+        } catch (Exception e) {
+            fail("Creating an empty matrix should not throw an exception.");
+        }
+    }
+
+    @Test
+    public void testLoadColumnMajorResizing() {
+        sm4.loadColumnMajor(squareMatrix);
+        
+        for (int i = 0; i < squareMatrix[0].length; i++) {
+            for (int j = 0; j < squareMatrix.length; j++) {
+                 assertEquals(squareMatrix[j][i], sm4.get(i).get(j));
             }
         }
     }
