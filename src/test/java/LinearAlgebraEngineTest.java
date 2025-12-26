@@ -259,8 +259,6 @@ public class LinearAlgebraEngineTest {
     void testDeepTreeWithLargeMatrices() {
         int size = 100;
         double[][] matA = new double[size][size];
-        
-        // אתחול המטריצה המקורית
         for(int i=0; i<size; i++) {
             for(int j=0; j<size; j++) {
                 matA[i][j] = 1.0;
@@ -320,7 +318,7 @@ public class LinearAlgebraEngineTest {
     @Test
     void testSingleNodeTree() {
         double[][] data = {{42, 10}};
-        ComputationNode root = new ComputationNode(data); // רק מטריצה, בלי אופרטור
+        ComputationNode root = new ComputationNode(data); 
         
         lae = new LinearAlgebraEngine(1);
         double[][] res = lae.run(root).getMatrix();
@@ -329,19 +327,18 @@ public class LinearAlgebraEngineTest {
     }
 
 
-    // @Test
-    // void testEngineReuseFails() {
-    //     double[][] data = {{1, 1}, {1, 1}};
-    //     ComputationNode a = new ComputationNode(data);
-    //     ComputationNode b = new ComputationNode(data);
-    //     ComputationNode root1 = new ComputationNode(ComputationNodeType.ADD, List.of(a, b));
-    //     lae = new LinearAlgebraEngine(2);
-    //     lae.run(root1); 
-    //     ComputationNode root2 = new ComputationNode(ComputationNodeType.ADD, List.of(a, b));
-    //     assertThrows(IllegalStateException.class, () -> {
-    //         lae.run(root2);
-    //     }, "Should throw IllegalStateException when trying to compute with a closed engine");
-    // }
+    @Test
+    void testEngineReuseFails() {
+         double[][] data = {{1, 1}, {1, 1}};
+         ComputationNode a = new ComputationNode(data);
+         ComputationNode b = new ComputationNode(data);
+         ComputationNode root1 = new ComputationNode(ComputationNodeType.ADD, List.of(a, b));
+         lae = new LinearAlgebraEngine(2);
+         lae.run(root1); 
+         ComputationNode root2 = new ComputationNode(ComputationNodeType.ADD, List.of(a, b));
+         ComputationNode result = lae.run(root2);
+         assertEquals(root2, result, "Engine shouldn't change the computation tree on reuse");
+    }
 
     @Test
     void testHighThreadLowWorkload() {
