@@ -3,8 +3,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import memory.SharedMatrix;
-import memory.SharedVector;
-import memory.VectorOrientation;
 
 public class SharedMatrixTest {
     double[][] matrix1 = {

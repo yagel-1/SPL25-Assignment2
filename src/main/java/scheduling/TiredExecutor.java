@@ -1,8 +1,6 @@
 package scheduling;
 
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TiredExecutor {
