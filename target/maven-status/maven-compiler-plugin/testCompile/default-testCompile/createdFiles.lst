@@ -1,6 +1,5 @@
 SharedVectorTest.class
 LinearAlgebraEngineTest.class
-testMain.class
 TiredExecutorTest.class
 TiredThreadTest.class
 SharedMatrixTest.class

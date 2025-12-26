@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="TiredExecutorTest" time="2.811" tests="14" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="TiredExecutorTest" time="3.036" tests="11" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="IL"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-23\bin"/>
-    <property name="sun.java.command" value="C:\Users\yagel\AppData\Local\Temp\surefire10126672126697864664\surefirebooter-20251225142522519_3.jar C:\Users\yagel\AppData\Local\Temp\surefire10126672126697864664 2025-12-25T14-25-22_373-jvmRun1 surefire-20251225142522519_1tmp surefire_0-20251225142522519_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\yagel\AppData\Local\Temp\surefire6012063736440388739\surefirebooter-20251225231347768_3.jar C:\Users\yagel\AppData\Local\Temp\surefire6012063736440388739 2025-12-25T23-13-47_604-jvmRun1 surefire-20251225231347768_1tmp surefire_0-20251225231347768_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\yagel\OneDrive\שולחן העבודה\לימודים\סמסטר ג\תכנות מערכות\‏‏עבודה 2\SPL25-Assignment2\target\test-classes;C:\Users\yagel\OneDrive\שולחן העבודה\לימודים\סמסטר ג\תכנות מערכות\‏‏עבודה 2\SPL25-Assignment2\target\classes;C:\Users\yagel\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\yagel\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\yagel\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\yagel\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\yagel\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\yagel\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\yagel\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\yagel\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;C:\Users\yagel\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.17.1\jackson-databind-2.17.1.jar;C:\Users\yagel\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.17.1\jackson-annotations-2.17.1.jar;C:\Users\yagel\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.17.1\jackson-core-2.17.1.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\yagel\AppData\Local\Temp\surefire10126672126697864664\surefirebooter-20251225142522519_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\yagel\AppData\Local\Temp\surefire6012063736440388739\surefirebooter-20251225231347768_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="23.0.1+11-39"/>
@@ -58,28 +58,15 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="testFairnessAndCorrectness" classname="TiredExecutorTest" time="0.042">
-    <system-out><![CDATA[worker: 0, time used: 18247000, time idle: 21267000, fatigue: 2.2945849762875676E7, Deviation: -312730.35725073144
-worker: 1, time used: 19346600, time idle: 19965300, fatigue: 2.1563422974003777E7, Deviation: -1695157.1461226307
-worker: 2, time used: 21332600, time idle: 17778300, fatigue: 2.6264574566955924E7, Deviation: 3005994.4468295164
-worker: 3, time used: 21136000, time idle: 17764200, fatigue: 2.7552857142014075E7, Deviation: 4294277.0218876675
-worker: 4, time used: 22446000, time idle: 16322600, fatigue: 1.79661961547826E7, Deviation: -5292383.965343807
-
---- Fairness Score (Sum of Squared Deviations) ---
-Score: 5.8457503818107336E13
-]]></system-out>
-  </testcase>
-  <testcase name="constructorTest" classname="TiredExecutorTest" time="0.005"/>
-  <testcase name="testShutDownFinishCurrTasks" classname="TiredExecutorTest" time="0.106"/>
-  <testcase name="testSubmitHeapSize" classname="TiredExecutorTest" time="0.215"/>
+  <testcase name="constructorTest" classname="TiredExecutorTest" time="0.007"/>
+  <testcase name="testSubmitHeapSize" classname="TiredExecutorTest" time="0.204"/>
   <testcase name="testShutdownStopsThreads" classname="TiredExecutorTest" time="0.063"/>
-  <testcase name="testSubmitAllHeapSize" classname="TiredExecutorTest" time="0.204"/>
-  <testcase name="testSubmitAllBlocksUntilCompletion" classname="TiredExecutorTest" time="0.394"/>
-  <testcase name="testSubmitInFlightCount" classname="TiredExecutorTest" time="0.205"/>
-  <testcase name="testSubmitAllInFlightCount" classname="TiredExecutorTest" time="1.127"/>
-  <testcase name="testThreadReuse" classname="TiredExecutorTest" time="0.002"/>
-  <testcase name="testShutdownClearsQueue" classname="TiredExecutorTest" time="0.002"/>
-  <testcase name="testSubmitAllParallel" classname="TiredExecutorTest" time="0.217"/>
-  <testcase name="testSubmitAfterShutdown" classname="TiredExecutorTest" time="0.0"/>
-  <testcase name="testSubmitDoTask" classname="TiredExecutorTest" time="0.215"/>
+  <testcase name="testSubmitAllHeapSize" classname="TiredExecutorTest" time="0.616"/>
+  <testcase name="testSubmitAllBlocksUntilCompletion" classname="TiredExecutorTest" time="0.389"/>
+  <testcase name="testSubmitInFlightCount" classname="TiredExecutorTest" time="0.204"/>
+  <testcase name="testSubmitAllInFlightCount" classname="TiredExecutorTest" time="1.124"/>
+  <testcase name="testThreadReuse" classname="TiredExecutorTest" time="0.0"/>
+  <testcase name="testShutdownClearsQueue" classname="TiredExecutorTest" time="0.0"/>
+  <testcase name="testSubmitAllParallel" classname="TiredExecutorTest" time="0.209"/>
+  <testcase name="testSubmitDoTask" classname="TiredExecutorTest" time="0.211"/>
 </testsuite>

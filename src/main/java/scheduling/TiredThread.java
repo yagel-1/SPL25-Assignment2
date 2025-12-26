@@ -59,6 +59,9 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
         if (!alive.get() || (!handoff.isEmpty() && handoff.peek().equals(POISON_PILL))){
             throw new IllegalStateException("worker is shutting down");
         }
+        if (!busy.compareAndSet(false, true)){
+            throw new IllegalStateException("worker is busy");
+        }
         handoff.add(task);
     }
 
@@ -83,7 +86,6 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
                 if (task == POISON_PILL) {
                     return;
                 }
-                busy.set(true);
                 Long startime = System.nanoTime();
                 timeIdle.addAndGet(startime - idleStartTime.get());
 
@@ -107,5 +109,4 @@ public class TiredThread extends Thread implements Comparable<TiredThread> {
         double otherFatigue = o.getFatigue();
         return Double.compare(myFatigue, otherFatigue);
     }
-
 }

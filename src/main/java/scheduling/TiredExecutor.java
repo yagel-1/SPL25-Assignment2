@@ -30,34 +30,47 @@ public class TiredExecutor {
         if (inFlight.get() < 0){
             throw new IllegalStateException("Executor is shutdown");
         }
-        try{
-            TiredThread worker = idleMinHeap.take();
-            inFlight.incrementAndGet();
-            Runnable newTask = ()->{
-                try{
-                    task.run();
-                }
-                finally{
-                    idleMinHeap.put(worker);
-                    inFlight.decrementAndGet();
-                    synchronized (this){
-                        notifyAll();
+        while(true){
+            try{
+                TiredThread worker = idleMinHeap.take();
+                inFlight.incrementAndGet();
+                Runnable newTask = ()->{
+                    try{
+                        task.run();
                     }
-                }
-            };
-            try {
-                worker.newTask(newTask);
-            } catch (IllegalStateException e) {
-                inFlight.decrementAndGet();
-                synchronized (this){
-                    notifyAll();
-                }
-            }            
-        } catch (InterruptedException ex){}
+                    finally{
+                        inFlight.decrementAndGet();
+                        if (inFlight.get() == 0){
+                            synchronized (this){
+                                notifyAll();
+                            }
+                        }
+                        idleMinHeap.put(worker);
+                    }
+                };
+                try {
+                    worker.newTask(newTask);
+                    break;
+                } catch (IllegalStateException e) {
+                    inFlight.decrementAndGet();
+                    if (inFlight.get() == 0){
+                        synchronized (this){
+                            notifyAll();
+                        }
+                    }
+                    idleMinHeap.put(worker);
+                }            
+            } catch (InterruptedException ex){
+                break;
+            }
+        }
     }
 
     public void submitAll(Iterable<Runnable> tasks) {
         // TODO: submit tasks one by one and wait until all finish
+        if (tasks == null){
+            throw new IllegalArgumentException("tasks is null");
+        }
         for (Runnable task : tasks){
             if (inFlight.get() < 0){
                 break;
