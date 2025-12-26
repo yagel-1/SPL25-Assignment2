@@ -258,8 +258,6 @@ public class LinearAlgebraEngineTest {
     void testDeepTreeWithLargeMatrices() {
         int size = 100;
         double[][] matA = new double[size][size];
-        
-        // אתחול המטריצה המקורית
         for(int i=0; i<size; i++) {
             for(int j=0; j<size; j++) {
                 matA[i][j] = 1.0;
