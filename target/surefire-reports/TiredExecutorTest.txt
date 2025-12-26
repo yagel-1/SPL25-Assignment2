@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: TiredExecutorTest
 -------------------------------------------------------------------------------
-Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.036 s -- in TiredExecutorTest
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.074 s -- in TiredExecutorTest
