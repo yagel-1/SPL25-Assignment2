@@ -70,6 +70,9 @@ public class LinearAlgebraEngine {
                 
             case ComputationNodeType.NEGATE:
                 {
+                    if (children.size() != 1){
+                        throw new IllegalArgumentException("Illegal operation: negate node must have exactly one child");
+                    }
                     leftMatrix.loadRowMajor(children.get(0).getMatrix());
                     executor.submitAll(createNegateTasks());
                     break;
@@ -77,6 +80,9 @@ public class LinearAlgebraEngine {
                 
             case ComputationNodeType.TRANSPOSE:
                 {
+                    if (children.size() != 1){
+                        throw new IllegalArgumentException("Illegal operation: transpose node must have exactly one child");
+                    }
                     leftMatrix.loadRowMajor(children.get(0).getMatrix());
                     executor.submitAll(createTransposeTasks());
                     break;
